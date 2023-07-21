@@ -1,15 +1,16 @@
 // library
-var express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
+require("dotenv").config();
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
 
 // routing
 const bootcampsRouter = require("./src/routes/bootcamp-router");
 const bookRouter = require("./src/routes/book-router");
 
 // app
-var app = express();
+const app = express();
 
 // middleware
 app.use(logger("dev"));
