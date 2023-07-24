@@ -5,9 +5,10 @@ const {
   responseData,
 } = require("../utils/response-handler");
 
-exports.insertBootcamp = (res, sql, requestBody) => {
+exports.insertBootcamp = (res, requestBody) => {
+  const query = "INSERT INTO bootcamp SET ?";
   // execute query
-  connection.query(sql, requestBody, (err, result, fields) => {
+  connection.query(query, requestBody, (err, result, fields) => {
     // handling err
     if (err) {
       return responseError(res, 500, "Failed insert data!", err);
@@ -18,9 +19,10 @@ exports.insertBootcamp = (res, sql, requestBody) => {
   });
 };
 
-exports.getBootcamps = (sql, res) => {
+exports.getBootcamps = (res) => {
+  const query = "SELECT * FROM bootcamp";
   // execute query
-  connection.query(sql, (err, results, fields) => {
+  connection.query(query, (err, results, fields) => {
     // handling error
     if (err) {
       return responseError(res, 500, "Something wrong in server!", err);
@@ -31,9 +33,10 @@ exports.getBootcamps = (sql, res) => {
   });
 };
 
-exports.getBootcampById = (sql, id, res) => {
+exports.getBootcampById = (id, res) => {
+  const querySearch = "SELECT * FROM bootcamp WHERE id = ?";
   // execute find data query
-  connection.query(sql, id, (err, result, fields) => {
+  connection.query(querySearch, id, (err, result, fields) => {
     // handling error
     if (err) {
       return responseError(res, 500, "Something wrong in server!", err);
@@ -49,9 +52,11 @@ exports.getBootcampById = (sql, id, res) => {
   });
 };
 
-exports.updateBootcamp = (sqlSearch, id, res, sqlUpdate, requestBody) => {
+exports.updateBootcamp = (id, res, requestBody) => {
+  const querySearch = "SELECT * FROM bootcamp WHERE id = ?";
+  const queryUpdate = "UPDATE bootcamp SET ? WHERE id = ?";
   // execute query find data
-  connection.query(sqlSearch, id, (err, results, fields) => {
+  connection.query(querySearch, id, (err, results, fields) => {
     // handling err
     if (err) {
       return responseError(res, 500, "Something wrong in server!", err);
@@ -60,24 +65,30 @@ exports.updateBootcamp = (sqlSearch, id, res, sqlUpdate, requestBody) => {
     // data finded
     if (results.length) {
       // execute query update
-      connection.query(sqlUpdate, [requestBody, id], (err, results, fields) => {
-        // handling err
-        if (err) {
-          return responseError(res, 500, "Something wrong in server!", err);
-        }
+      connection.query(
+        queryUpdate,
+        [requestBody, id],
+        (err, results, fields) => {
+          // handling err
+          if (err) {
+            return responseError(res, 500, "Something wrong in server!", err);
+          }
 
-        // success update
-        responseMessage(res, 200, "Success update data!", true);
-      });
+          // success update
+          responseMessage(res, 200, "Success update data!", true);
+        }
+      );
     } else {
       return responseMessage(res, 404, "Data not found!", false);
     }
   });
 };
 
-exports.deleteBootcamp = (sqlSearch, id, res, sqlDelete) => {
+exports.deleteBootcamp = (id, res) => {
+  const querySearch = "SELECT * FROM bootcamp WHERE id = ?";
+  const queryDelete = "DELETE FROM bootcamp WHERE id = ?";
   // execute query find data
-  connection.query(sqlSearch, id, (err, result, fields) => {
+  connection.query(querySearch, id, (err, result, fields) => {
     // handling err
     if (err) {
       return responseError(res, 500, "Something wrong in server!", err);
@@ -86,7 +97,7 @@ exports.deleteBootcamp = (sqlSearch, id, res, sqlDelete) => {
     // data finded
     if (result.length) {
       // execute query delete
-      connection.query(sqlDelete, id, (err, result, fields) => {
+      connection.query(queryDelete, id, (err, result, fields) => {
         // handling err
         if (err) {
           return responseError(res, 500, "Something wrong in server!", err);
