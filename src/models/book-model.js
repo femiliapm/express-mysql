@@ -1,42 +1,43 @@
 const connection = require("../configs/database");
-const {
-  responseError,
-  responseMessage,
-  responseData,
-} = require("../utils/response-handler");
 
-exports.addBook = (requestBody, response) => {
-  const sql = "INSERT INTO books SET ?";
-  // execute query
-  connection.query(sql, requestBody, (err, result, fields) => {
-    // handling error
-    if (err) {
-      return responseError(response, 500, "Something wrong in server!", err);
-    }
+exports.addBook = (requestBody) => {
+  return new Promise((resolve, reject) => {
+    const sql = "INSERT INTO books SET ?";
+    // execute query
+    connection.query(sql, requestBody, (err, result, fields) => {
+      // handling error
+      if (err) {
+        console.log(err);
+        reject(err);
+      }
 
-    // succeed
-    responseMessage(response, 201, "Successfully added book!", true);
+      resolve(result);
+    });
   });
 };
 
-exports.getBooks = (response) => {
-  const sql = `SELECT * FROM books`;
-  connection.query(sql, (err, result, fields) => {
-    if (err) {
-      return responseError(response, 500, "Something wrong in server!", err);
-    }
+exports.getBooks = () => {
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT * FROM books`;
+    connection.query(sql, (err, result, fields) => {
+      if (err) {
+        reject(err);
+      }
 
-    responseData(response, 200, result);
+      resolve(result);
+    });
   });
 };
 
-exports.getBooksById = (response, id) => {
-  const sql = `SELECT * FROM books WHERE id = ?`;
-  connection.query(sql, id, (err, result, fields) => {
-    if (err) {
-      return responseError(response, 500, "Something wrong in server!", err);
-    }
+exports.getBooksById = (id) => {
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT * FROM books WHERE id = ?`;
+    connection.query(sql, id, (err, result, fields) => {
+      if (err) {
+        reject(err);
+      }
 
-    responseData(response, 200, result);
+      resolve(result);
+    });
   });
 };
